@@ -1,0 +1,3 @@
+[submodule "blizzard"]
+	path = blizzard
+	url = https://github.com/antmat/blizzard
