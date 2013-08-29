@@ -73,14 +73,14 @@ namespace AC {
         }*/
     }
 
-    void Node::fill_phrase (std::string& phrase) {
+    void Node::fill_phrase (std::string& phrase) const {
         if(this->parent != nullptr) {
             this->parent->fill_phrase(phrase);
         }
         phrase += value;
     }
 
-    std::string Node::get_phrase() {
+    std::string Node::get_phrase() const {
         std::string phrase;
         this->fill_phrase(phrase);
         return phrase;

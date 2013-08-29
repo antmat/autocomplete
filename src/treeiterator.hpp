@@ -15,7 +15,7 @@ namespace AC {
         TreeConstIterator& operator++();
         bool operator==(const TreeConstIterator& rhs);
         bool operator!=(const TreeConstIterator& rhs);
-        Node& operator*();
+        const Node& operator*();
     };
 }
 #endif // TREEITERATOR_HPP

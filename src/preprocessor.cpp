@@ -8,27 +8,27 @@
 #endif
 namespace AC {
     namespace Preprocessor {
-        void save_chunk(const Tree& tree, unsigned int chunk_num) {
-            for(auto& element : tree) {
+        static void save_chunk(const Tree& tree, unsigned int chunk_num, const std::string& outfile_base_name) {
+            std::ofstream output(outfile_base_name+std::to_string(chunk_num), std::ifstream::out);
+            if(!output.is_open()) {
+                std::cerr << "Could not open " << outfile_base_name+std::to_string(chunk_num) << " for writing" << std::endl;
+                return;
+            }
+
+            for(const auto& element : tree) {
                 if(element.get_frequency()>0) {
                     std::string phrase(element.get_phrase()+":"+std::to_string(element.get_frequency())+'\n');
                     output.write(phrase.c_str(), phrase.size());
                 }
             }
-            tree = Tree();
         }
 
-        bool compact_data(const std::string& infile, const std::string& outfile) {
+        bool compact_data(const std::string& infile, const std::string& outfile_base_name) {
 
-            std::cout << "Parsing " << infile << " to " << outfile << std::endl;
+            std::cout << "Parsing " << infile << std::endl;
             std::ifstream input(infile);
             if(!input.is_open()) {
                 std::cerr << "Could not open " << infile << " for reading" << std::endl;
-                return false;
-            }
-            std::ofstream output(outfile,std::ifstream::out);
-            if(!output.is_open()) {
-                std::cerr << "Could not open " << outfile << " for writing" << std::endl;
                 return false;
             }
 
@@ -44,7 +44,8 @@ namespace AC {
                 if(++cnt % TEST_MEM_EACH == 0) {
                     process_mem_usage(mem_usage_vm, mem_usage_resident);
                     if(mem_usage_resident > MAX_ALLOWED_MEM) {
-                        Preprocessor::save_chunk(tree, ++chunk_num);
+                        Preprocessor::save_chunk(tree, ++chunk_num, outfile_base_name);
+                        tree.erase();
                     }
                 }
                 /*

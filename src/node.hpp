@@ -6,10 +6,10 @@
 #include <assert.h>
 #define TOP_SUGGESTIONS_CNT 20
 namespace AC {
-    class TreeIterator;
+    class TreeConstIterator;
     class Node
     {
-        friend class TreeIterator;
+        friend class TreeConstIterator;
     public:
         typedef std::vector<Node*> Subnodes;
     protected:
@@ -20,7 +20,7 @@ namespace AC {
         Node* top_node;
         Node* search_internal(const std::string& phrase, unsigned int current_position, bool insert_on_miss);
     public:
-        inline unsigned int get_frequency() {
+        inline unsigned int get_frequency() const{
             return this->frequency;
         }
 
@@ -43,8 +43,8 @@ namespace AC {
         Node* search(const std::string& phrase, unsigned int current_position);
         Node* add_phrase(const std::string& phrase, unsigned int current_position);
         void fill_suggests(std::vector<std::string>& suggests);
-        void fill_phrase (std::string& phrase);
-        std::string get_phrase();
+        void fill_phrase (std::string& phrase) const;
+        std::string get_phrase() const;
     };
 
 }

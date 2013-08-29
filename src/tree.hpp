@@ -22,8 +22,8 @@ namespace AC {
         void add_phrase(const std::string& phrase);
         void fill_suggests(const std::string& phrase, std::vector<std::string>& suggests);
         std::vector<std::string> get_suggests(const std::string& phrase);
-        ConstIterator begin();
-        ConstIterator end();
+        ConstIterator begin() const;
+        ConstIterator end() const;
     };
 }
 #endif // TREE_HPP

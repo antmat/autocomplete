@@ -26,12 +26,12 @@ namespace AC {
         return result;
     }
 
-    Tree::Iterator Tree::begin() {
-        return Tree::Iterator::begin(*this);
+    Tree::ConstIterator Tree::begin() const {
+        return Tree::ConstIterator::begin(*this);
     }
 
-    Tree::Iterator Tree::end() {
-        return Tree::Iterator::end(*this);
+    Tree::ConstIterator Tree::end() const {
+        return Tree::ConstIterator::end(*this);
     }
 
     Tree::~Tree() throw() {
