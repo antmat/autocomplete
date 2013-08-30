@@ -1,0 +1,24 @@
+<blizzard>
+	<pid_file_name>/tmp/ac.pid</pid_file_name>
+	<log_file_name>/tmp/ac.log</log_file_name>
+	<log_level>notice</log_level>
+
+	<access_log_file_name>/tmp/ac.access.log</access_log_file_name>
+
+
+	<stats uri="/stats" />
+
+	<plugin ip="0.0.0.0" port="4242" >
+		<connection_timeout>300</connection_timeout>
+		<idle_timeout>0</idle_timeout>
+
+		<library>./debug_build/libac.so</library>
+		<params>/tmp/out.test</params>
+
+		<easy_threads>24</easy_threads>
+		<hard_threads>0</hard_threads>
+
+		<easy_queue_limit>200</easy_queue_limit>
+		<hard_queue_limit>300</hard_queue_limit>
+	</plugin>
+</blizzard>

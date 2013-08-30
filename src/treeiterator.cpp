@@ -1,4 +1,5 @@
 #include "treeiterator.hpp"
+#include <climits>
 #include <iostream>
 namespace AC {
     TreeConstIterator TreeConstIterator::begin(const Tree& tree) {
@@ -25,22 +26,27 @@ namespace AC {
     //Todo decrement iterator, reverse iterator.
     TreeConstIterator& TreeConstIterator::operator++() {
         if(!this->node->subnodes.empty()) {
-            this->node = this->node->subnodes[0];
+            Node* new_node(this->node->subnodes[0]);
+            for(unsigned int i = 0; i<this->node->subnodes.size(); i++) {
+                if(this->node->subnodes[i]->value < new_node->value) {
+                    new_node = this->node->subnodes[i];
+                }
+            }
+            this->node = new_node;
             return *this;
         }
         while(this->node->parent != nullptr) {
             char value = this->node->value;
             this->node = this->node->parent;
             unsigned int i;
+            Node* new_node(nullptr);
             for(i = 0; i<this->node->subnodes.size(); i++) {
-                if(this->node->subnodes[i]->value == value) {
-                    break;
+                if(this->node->subnodes[i]->value > value && (new_node == nullptr || this->node->subnodes[i]->value <= new_node->value)) {
+                    new_node = this->node->subnodes[i];
                 }
             }
-            assert(i < this->node->subnodes.size());
-            i++;
-            if(i < this->node->subnodes.size()) {
-                this->node = this->node->subnodes[i];
+            if(new_node != nullptr) {
+                this->node = new_node;
                 return *this;
             }
         }

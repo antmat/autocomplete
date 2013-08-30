@@ -2,11 +2,11 @@
 #include <iostream>
 namespace AC {
 
-    Node* Node::search_internal(const std::string& phrase, unsigned int current_position, bool insert_on_miss) {
+    Node* Node::search_internal(const String& phrase, unsigned int current_position, bool insert_on_miss, unsigned int freq) {
         assert(TOP_SUGGESTIONS_CNT >0);
         assert(current_position < phrase.size()+1);
         if(current_position == phrase.size()) {
-            this->frequency++;
+            this->frequency += freq;
             //std::cout << "added " << this->get_phrase() << ", frequency: " << this->get_frequency() <<std::endl;
             return this;
         }
@@ -41,7 +41,7 @@ namespace AC {
         return node_added;
     }
 
-    Node* Node::search(const std::string& phrase, unsigned int current_position) {
+    Node* Node::search(const String& phrase, unsigned int current_position) {
         if(this->parent == nullptr) {
             if(this->subnodes.empty()) {
                 return nullptr;
@@ -51,39 +51,59 @@ namespace AC {
         return this->search_internal(phrase, current_position, false);
     }
 
-    Node* Node::add_phrase(const std::string& phrase, unsigned int current_position) {
+    Node* Node::add_phrase(const String& phrase, unsigned int current_position, unsigned int freq) {
         if(this->parent == nullptr) {
             if(this->subnodes.empty()) {
                 this->subnodes.push_back(new Node());
                 this->subnodes[0]->parent = this;
             }
-            return this->subnodes[0]->search_internal(phrase, current_position, true);
+            return this->subnodes[0]->search_internal(phrase, current_position, true, freq);
         }
-        return this->search_internal(phrase, current_position, true);
+        return this->search_internal(phrase, current_position, true, freq);
     }
 
-    void Node::fill_suggests(std::vector<std::string>& /*suggests*/) {
-        /*for(unsigned int i=0; i<TOP_SUGGESTIONS_CNT; i++) {
-            if(this->top_nodes[i] != nullptr) {
-                suggests.push_back(this->top_nodes[i]->get_phrase());
+    void Node::fill_suggests(std::vector<String>& suggests, unsigned int count, bool search_deeper) {
+        suggests.push_back(this->top_node->get_phrase());
+        if(suggests.size() >= count) {
+            return;
+        }
+        unsigned int limit = search_deeper ? 1 : this->top_node->frequency;
+        for(unsigned int current_frequency = this->top_node->frequency; current_frequency>=limit; current_frequency--) {
+            for(unsigned int i=0; i < this->subnodes.size(); i++) {
+                if(this->subnodes[i]->top_node->frequency == current_frequency) {
+                    this->subnodes[i]->fill_suggests(suggests, false);
+                    if(suggests.size() >= count) {
+                        return;
+                    }
+                }
             }
-            else {
-                break;
-            }
-        }*/
+        }
     }
 
-    void Node::fill_phrase (std::string& phrase) const {
-        if(this->parent != nullptr) {
+    void Node::fill_phrase (String& phrase) const {
+        if(this->parent != nullptr && this->parent->parent != nullptr) {
             this->parent->fill_phrase(phrase);
+            phrase += this->value;
         }
-        phrase += value;
     }
 
-    std::string Node::get_phrase() const {
-        std::string phrase;
+    String Node::get_phrase() const {
+        String phrase;
         this->fill_phrase(phrase);
         return phrase;
+    }
+
+    void Node::prune(unsigned int prunning_limit) {
+        for(unsigned int i=0; i<this->subnodes.size(); i++) {
+            if(this->subnodes[i]->top_node->frequency <= prunning_limit) {
+                delete subnodes[i];
+                this->subnodes.erase(this->subnodes.begin() + i);
+                i--;
+            }
+            else {
+                this->subnodes[i]->prune(prunning_limit);
+            }
+        }
     }
 
 }

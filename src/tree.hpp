@@ -1,6 +1,6 @@
 #ifndef TREE_HPP
 #define TREE_HPP
-#include <string>
+#include "util/string.hpp"
 #include <vector>
 #include "treeiterator.hpp"
 namespace AC {
@@ -18,10 +18,11 @@ namespace AC {
         Tree();
         ~Tree() throw();
 
+        void prune(unsigned int prunning_limit);
         void erase();
-        void add_phrase(const std::string& phrase);
-        void fill_suggests(const std::string& phrase, std::vector<std::string>& suggests);
-        std::vector<std::string> get_suggests(const std::string& phrase);
+        void add_phrase(const String& phrase, unsigned int frequency = 1);
+        void fill_suggests(const String& phrase, std::vector<String>& suggests, unsigned int count);
+        std::vector<String> get_suggests(const String& phrase, unsigned int count);
         ConstIterator begin() const;
         ConstIterator end() const;
     };
