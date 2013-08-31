@@ -1,5 +1,7 @@
 #include "util/string.hpp"
 #include "preprocessor.hpp"
+#include <list>
+#include <vector>
 using namespace AC;
 int main (int argc, const char **argv) {
     if(argc != 3) {

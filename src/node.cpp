@@ -1,13 +1,15 @@
 #include "node.hpp"
 #include <iostream>
+#include <set>
 namespace AC {
 
     Node* Node::search_internal(const String& phrase, unsigned int current_position, bool insert_on_miss, unsigned int freq) {
         assert(TOP_SUGGESTIONS_CNT >0);
         assert(current_position < phrase.size()+1);
         if(current_position == phrase.size()) {
-            this->frequency += freq;
-            //std::cout << "added " << this->get_phrase() << ", frequency: " << this->get_frequency() <<std::endl;
+            if(insert_on_miss) {
+                this->frequency += freq;
+            }
             return this;
         }
         Node* search_node = nullptr;
@@ -22,13 +24,14 @@ namespace AC {
                 search_node = new Node();
                 search_node->value = phrase[current_position];
                 search_node->parent = this;
+                search_node->top_node = search_node;
                 this->subnodes.push_back(search_node);
             }
             else {
                 return nullptr;
             }
         }
-        Node* node_added = search_node->search_internal(phrase, current_position+1, insert_on_miss);
+        Node* node_added = search_node->search_internal(phrase, current_position+1, insert_on_miss, freq);
         if(node_added == nullptr) {
             return node_added;
         }
@@ -46,7 +49,7 @@ namespace AC {
             if(this->subnodes.empty()) {
                 return nullptr;
             }
-            return this->subnodes[0]->search_internal(phrase, current_position, true);
+            return this->subnodes[0]->search_internal(phrase, current_position, false);
         }
         return this->search_internal(phrase, current_position, false);
     }
@@ -62,21 +65,56 @@ namespace AC {
         return this->search_internal(phrase, current_position, true, freq);
     }
 
-    void Node::fill_suggests(std::vector<String>& suggests, unsigned int count, bool search_deeper) {
-        suggests.push_back(this->top_node->get_phrase());
-        if(suggests.size() >= count) {
-            return;
+    void Node::fill_suggests(std::vector<String>& suggests, unsigned int count) {
+        auto comparator = [](Node* lhs, Node* rhs){
+            if(lhs->frequency > rhs->frequency) {
+                return true;
+            }
+            if(lhs->frequency < rhs->frequency) {
+                return false;
+            }
+            return lhs < rhs;
+        };
+        std::map<Node*, Node*, decltype(comparator)> sorting_map(comparator);
+        sorting_map[this] = this;
+        for(unsigned int i=0; i< this->subnodes.size(); i++) {
+            sorting_map[this->subnodes[i]->top_node] = this->subnodes[i];
         }
-        unsigned int limit = search_deeper ? 1 : this->top_node->frequency;
-        for(unsigned int current_frequency = this->top_node->frequency; current_frequency>=limit; current_frequency--) {
-            for(unsigned int i=0; i < this->subnodes.size(); i++) {
-                if(this->subnodes[i]->top_node->frequency == current_frequency) {
-                    this->subnodes[i]->fill_suggests(suggests, false);
-                    if(suggests.size() >= count) {
-                        return;
+        for(unsigned int i=1; i<= count; i++) {
+            auto it = sorting_map.end();
+            if(it == sorting_map.begin()) {
+                break;
+            }
+            it--;
+            unsigned int min_frequency = it->first->frequency;
+
+            for(auto& pair : sorting_map) {
+                if(pair.first->frequency < min_frequency) {
+                    break;
+                }
+                if(pair.second->frequency > min_frequency) {
+                    sorting_map[pair.second] = pair.second;
+                }
+                auto& cur_subnodes = pair.second->subnodes;
+                for(unsigned int k=0; k < cur_subnodes.size(); k++) {
+                    if(cur_subnodes[k]->top_node->frequency > min_frequency || sorting_map.size() < count) {
+                        sorting_map[cur_subnodes[k]->top_node] = cur_subnodes[k];
+                    }
+                    if(cur_subnodes[k]->frequency > min_frequency || sorting_map.size() < count) {
+                        sorting_map[cur_subnodes[k]] = cur_subnodes[k];
                     }
                 }
             }
+            if(sorting_map.size() > count) {
+                for(size_t k = sorting_map.size(); k>count; k--) {
+                    auto it2 = sorting_map.end();
+                    --it2;
+                    sorting_map.erase(it2);
+                }
+            }
+        }
+        for(auto& pair : sorting_map) {
+            suggests.push_back(pair.first->get_phrase());
         }
     }
 
@@ -105,5 +143,4 @@ namespace AC {
             }
         }
     }
-
 }

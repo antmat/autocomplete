@@ -11,9 +11,7 @@
 #endif
 
 
-#ifndef MAX_LINE_SIZE
-    #define MAX_LINE_SIZE 256
-#endif
+
 
 namespace AC {
     namespace Preprocessor {

@@ -2,22 +2,11 @@
 #include "memusage.hpp"
 #include <stdexcept>
 #include "util/string.hpp"
+#include "constants.hpp"
 //TODO move to constants file and replace macro to const vars
-#ifndef TEST_MEM_EACH
-    #define TEST_MEM_EACH 100000
-#endif
-
-#ifndef MAX_ALLOWED_MEM
-    #define MAX_ALLOWED_MEM 2000000
-#endif
-
-#ifndef MERGE_CHUNK_SIZE
-    #define MERGE_CHUNK_SIZE 10000
-#endif
 
 namespace AC {
     namespace Preprocessor {
-
         void save_chunk(const Tree& tree, unsigned int chunk_num, const String& outfile_base_name) {
             std::ofstream output(outfile_base_name+'.'+std::to_string(chunk_num), std::ifstream::out);
             if(!output.is_open()) {
@@ -137,6 +126,7 @@ namespace AC {
             unsigned int cnt = 0;
             chunks_created = 0;
             unsigned int mem_usage_vm = 0, mem_usage_resident = 0;
+            unsigned int last_memory_usage = MAX_ALLOWED_MEM;
             for (String data; std::getline(input, data); )
             {
                 if(data.size() == 0) {
@@ -144,7 +134,8 @@ namespace AC {
                 }
                 if(++cnt % TEST_MEM_EACH == 0) {
                     process_mem_usage(mem_usage_vm, mem_usage_resident);
-                    if(mem_usage_resident > MAX_ALLOWED_MEM) {
+                    if(mem_usage_resident > last_memory_usage + chunks_created*MEMORY_STEP) {
+                        last_memory_usage = mem_usage_resident;
                         Preprocessor::save_chunk(tree, chunks_created++, outfile_base_name);
                         tree.erase();
                     }
@@ -166,8 +157,8 @@ namespace AC {
             std::cout <<"compacted to " << chunks_created << " chunks" << std::endl;
             return true;
         }
-        void load_tree(Tree& tree, const String& infile) {
 
+        void load_tree(Tree& tree, const String& infile) {
             std::ifstream input(infile);
             std::cerr << "Loading data from " << infile <<std::endl;
             unsigned int frequency;
@@ -175,11 +166,15 @@ namespace AC {
             unsigned int cnt = 0;
             unsigned int prunning_limit = 0;
             unsigned int mem_usage_vm = 0, mem_usage_resident = 0;
+            unsigned int last_memory_usage = MAX_ALLOWED_MEM;
             while(read_string(input, data, frequency)){
                 tree.add_phrase(data, frequency);
                 if(++cnt % TEST_MEM_EACH == 0) {
                     process_mem_usage(mem_usage_vm, mem_usage_resident);
-                    if(mem_usage_resident > MAX_ALLOWED_MEM) {
+                    //delete does not return memory to OS generally. So we need to check if mem consuption still grow.
+                    //Todo: In fact we should use predefined prunning for a tree.
+                    if(mem_usage_resident > last_memory_usage + prunning_limit*MEMORY_STEP) {
+                        last_memory_usage = mem_usage_resident;
                         tree.prune(++prunning_limit);
                     }
                 }
