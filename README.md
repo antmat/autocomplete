@@ -5,26 +5,26 @@ Contains of data preprocessor, and a module for blizzard http server.
 Requires compiler with c++11 standart support (for example gcc4.7+)
 
 ### Building procedure
-cd Autocoplete
+`cd Autocoplete
 mkdir build
 cd build
 export CMAKE_DEFS="-DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #this is required if your default compiler doesn't support c++11
 export CMAKE_DEFS="$CMAKE_DEFS -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #You can specify RELEASE build here
 cmake $CMAKE_DEFS ../ 
-make
+make`
 
 ### Running preprocessor
 It requres file with your input data in encoding you will use further and lines splitted by \n
-#build autocomplete project
-cd Autocomplete
-./build/preprocessor /path/to/queries /path/to/compressed/chunks/output/file
+First you need to build autocomplete project, than
+`cd Autocomplete
+./build/preprocessor /path/to/queries /path/to/compressed/chunks/output/file`
 
 You will get in /path/to/compressed/chunks/output/ files like
-/path/to/compressed/chunks/output/file
+`/path/to/compressed/chunks/output/file
 /path/to/compressed/chunks/output/file.0
 /path/to/compressed/chunks/output/file.1
 /path/to/compressed/chunks/output/file.2
-...
+...`
 
 ### Running http server
 Compile blizzard (and optionally install) as described in https://github.com/antmat/blizzard
