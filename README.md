@@ -5,14 +5,13 @@ Contains of data preprocessor, and a module for blizzard http server.
 Requires compiler with c++11 standart support (for example gcc4.7+)  
 
 ### Building procedure
-```cd Autocomplete
-mkdir build
-cd build
-export CMAKE_DEFS="-DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #this is required if your default compiler doesn't support c++11
-export CMAKE_DEFS="$CMAKE_DEFS -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #You can specify RELEASE build here
-cmake $CMAKE_DEFS ../
-make
-```
+    cd Autocomplete
+    mkdir build
+    cd build
+    export CMAKE_DEFS="-DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #this is required if your default compiler doesn't support c++11
+    export CMAKE_DEFS="$CMAKE_DEFS -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #You can specify RELEASE build here
+    cmake $CMAKE_DEFS ../
+    make
 
 ### Running preprocessor
 It requres file with your input data in encoding you will use further and lines splitted by \n  
