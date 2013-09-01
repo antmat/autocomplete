@@ -1,6 +1,7 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 
+//TODO: move all tunable values to config
 namespace AC {
     /**
      * @brief number of chunks to process between checking memory consumption
@@ -29,7 +30,7 @@ namespace AC {
      * @brief true when queries organized like(without spaces) "user_id1 \t query1 \n query2 \n query3 \n user_id2..."
      * false when input file is \n divided queries only
      */
-    const bool USE_BY_USER_INPUT = false;
+    const bool USE_BY_USER_INPUT = true;
 
     /**
      * @brief Should we use memory to prune our tree or use fixed prunning coeff
@@ -48,7 +49,7 @@ namespace AC {
     /**
      * @brief Default prunning limit for a tree
      */
-    const unsigned int PRUNNING_LIMIT = 0;
+    const unsigned int PRUNNING_LIMIT = 8;
 
     /**
      * @brief Applyy prunning each PRUNNING_FREQ steps
@@ -59,5 +60,10 @@ namespace AC {
      * @brief Default chunk size for compacting
      */
     const unsigned int CHUNK_SIZE = 5000000;
+
+    /**
+     * @brief Maximum phrase length to store in the tree.
+     */
+    const unsigned int MAX_PHRASE_SIZE = 200;
 }
 #endif // CONSTANTS_HPP

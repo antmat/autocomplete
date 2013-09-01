@@ -3,6 +3,7 @@
 #include "node.hpp"
 #include "util/string.hpp"
 #include <iostream>
+#include "constants.hpp"
 namespace AC {
     Tree::Tree() :
         root(new Node())
@@ -10,6 +11,9 @@ namespace AC {
     }
 
     void Tree::add_phrase(const String& phrase, unsigned int frequency) {
+        if(phrase.size() > MAX_PHRASE_SIZE) {
+            return;
+        }
         this->root->add_phrase(phrase, 0, frequency);
     }
 

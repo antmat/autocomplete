@@ -4,7 +4,6 @@
 #include "util/string.hpp"
 #include "constants.hpp"
 #include <set>
-//TODO move to constants file and replace macro to const vars
 
 namespace AC {
     namespace Preprocessor {
