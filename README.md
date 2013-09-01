@@ -32,7 +32,8 @@ You will get in `/path/to/compressed/chunks/output/` files like
 ```
 
 ### Running http server
-Compile blizzard (and optionally install) as described in https://github.com/antmat/blizzard  
+Compile blizzard (and optionally install) as described in https://github.com/antmat/blizzard 
+(Blizzard server itself require a number of libs - https://github.com/bachan/coda, http://software.schmorp.de/pkg/libev.html, http://expat.sourceforge.net/)
 copy config/blizzard.xml to any file  
 change in it <params> section to /path/to/compressed/chunks/output/file you used in preprocessor  
 Change other values to desired ones (see https://github.com/antmat/blizzard)  
