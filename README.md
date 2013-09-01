@@ -20,10 +20,11 @@ First you need to build autocomplete project, than
     ./build/preprocessor /path/to/queries /path/to/compressed/chunks/output/file
 
 You will get in `/path/to/compressed/chunks/output/` files like
-    /path/to/compressed/chunks/output/file
-    /path/to/compressed/chunks/output/file.0
-    /path/to/compressed/chunks/output/file.1
-    /path/to/compressed/chunks/output/file.2
+```/path/to/compressed/chunks/output/file
+/path/to/compressed/chunks/output/file.0
+/path/to/compressed/chunks/output/file.1
+/path/to/compressed/chunks/output/file.2
+```
 
 ### Running http server
 Compile blizzard (and optionally install) as described in https://github.com/antmat/blizzard  
