@@ -4,8 +4,7 @@ Simple autocomplete engine.
 Contains of data preprocessor, and a module for blizzard http server.
 Requires compiler with c++11 standart support (for example gcc4.7+)
 
-Building procedure
-==================
+### Building procedure
 cd Autocoplete
 mkdir build
 cd build
@@ -14,8 +13,7 @@ export CMAKE_DEFS="$CMAKE_DEFS -DCMAKE_CXX_COMPILER=/usr/bin/g++-4.7" #You can s
 cmake $CMAKE_DEFS ../ 
 make
 
-Running preprocessor
-====================
+### Running preprocessor
 It requres file with your input data in encoding you will use further and lines splitted by \n
 #build autocomplete project
 cd Autocomplete
@@ -28,8 +26,7 @@ You will get in /path/to/compressed/chunks/output/ files like
 /path/to/compressed/chunks/output/file.2
 ...
 
-Running http server
-===================
+### Running http server
 Compile blizzard (and optionally install) as described in https://github.com/antmat/blizzard
 copy config/blizzard.xml to any file
 change in it <params> section to /path/to/compressed/chunks/output/file you used in preprocessor
