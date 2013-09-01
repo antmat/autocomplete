@@ -39,7 +39,7 @@ namespace AC {
                 task->add_response_header("Content-type", "text/html; charset=utf-8");
                 task->add_response_buffer(response.c_str(),response.size());
                 task->set_response_status(200);
-                std::cerr << "request done. Results count " << suggests.size()<< std::endl;
+                std::cerr << "request done. Results count " + std::to_string(suggests.size()) + "\n";
                 return BLZ_OK;
             }
             catch (std::exception& e)

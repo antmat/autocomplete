@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "util/string.hpp"
 #include "constants.hpp"
+#include <set>
 //TODO move to constants file and replace macro to const vars
 
 namespace AC {
@@ -52,7 +53,6 @@ namespace AC {
         int determine_min_stream(std::vector<std::shared_ptr<std::ifstream>>& streams, String& min_phrase, std::map<String, unsigned int>& phrase_counts) {
             min_phrase = "";
             if(streams.size() == 0) {
-                std::cout << "streams size is " << streams.size() << std::endl;
                 throw std::logic_error("streams are empty");
             }
             String data;
@@ -127,30 +127,55 @@ namespace AC {
             chunks_created = 0;
             unsigned int mem_usage_vm = 0, mem_usage_resident = 0;
             unsigned int last_memory_usage = MAX_ALLOWED_MEM;
+            std::set<String> user_queries;
             for (String data; std::getline(input, data); )
             {
                 if(data.size() == 0) {
                     continue;
                 }
-                if(++cnt % TEST_MEM_EACH == 0) {
-                    process_mem_usage(mem_usage_vm, mem_usage_resident);
-                    if(mem_usage_resident > last_memory_usage + chunks_created*MEMORY_STEP) {
-                        last_memory_usage = mem_usage_resident;
-                        Preprocessor::save_chunk(tree, chunks_created++, outfile_base_name);
-                        tree.erase();
+                if(USE_MEMORY_DEPENDENT_CHUNK_SIZE) {
+                    if(++cnt % TEST_MEM_EACH == 0) {
+                        process_mem_usage(mem_usage_vm, mem_usage_resident);
+                        if(mem_usage_resident > last_memory_usage + chunks_created*MEMORY_STEP) {
+                            last_memory_usage = mem_usage_resident;
+                            Preprocessor::save_chunk(tree, chunks_created++, outfile_base_name);
+                            tree.erase();
+                        }
                     }
                 }
-                /*
-                size_t tab_position = data.find_first_of('\t');
-                if(tab_position == data.size()-1) {
-                    std::cerr << "Bad input data format. Found last \\t in string - " << data << std::endl;
-                    return false;
+                else if (++cnt % CHUNK_SIZE == 0) {
+                    Preprocessor::save_chunk(tree, chunks_created++, outfile_base_name);
+                    tree.erase();
                 }
-                if(tab_position != String::npos) {
-                    data.erase(0, tab_position+1);
+                if(USE_BY_USER_INPUT) {
+                    size_t tab_position = data.find_first_of('\t');
+                    if(tab_position != String::npos &&
+                       (tab_position == data.size()-1 ||
+                        tab_position != data.find_last_of('\t'))) {
+                        std::cerr << "Bad input data format. " << data << std::endl;
+                        return false;
+                    }
+                    if(tab_position != String::npos) {
+                        for(auto& line : user_queries) {
+                            tree.add_phrase(line);
+                        }
+                        user_queries.clear();
+                        data.erase(0, tab_position+1);
+                        user_queries.insert(data);
+                    }
+                    else {
+                        user_queries.insert(data);
+                    }
                 }
-                */
-                tree.add_phrase(data);
+                else {
+                    tree.add_phrase(data);
+                }
+            }
+            if(USE_BY_USER_INPUT) {
+                for(auto& line : user_queries) {
+                    tree.add_phrase(line);
+                }
+                user_queries.clear();
             }
             Preprocessor::save_chunk(tree, chunks_created++, outfile_base_name);
             tree.erase();
@@ -168,15 +193,20 @@ namespace AC {
             unsigned int mem_usage_vm = 0, mem_usage_resident = 0;
             unsigned int last_memory_usage = MAX_ALLOWED_MEM;
             while(read_string(input, data, frequency)){
-                tree.add_phrase(data, frequency);
-                if(++cnt % TEST_MEM_EACH == 0) {
-                    process_mem_usage(mem_usage_vm, mem_usage_resident);
-                    //delete does not return memory to OS generally. So we need to check if mem consuption still grow.
-                    //Todo: In fact we should use predefined prunning for a tree.
-                    if(mem_usage_resident > last_memory_usage + prunning_limit*MEMORY_STEP) {
-                        last_memory_usage = mem_usage_resident;
-                        tree.prune(++prunning_limit);
+                if(USE_MEMORY_DEPENDENT_PRUNNING) {
+                    tree.add_phrase(data, frequency);
+                    if(++cnt % TEST_MEM_EACH == 0) {
+                        process_mem_usage(mem_usage_vm, mem_usage_resident);
+                        //delete does not return memory to OS generally. So we need to check if mem consuption still grow.
+                        //Todo: In fact we should use predefined prunning for a tree.
+                        if(mem_usage_resident > last_memory_usage + prunning_limit*MEMORY_STEP) {
+                            last_memory_usage = mem_usage_resident;
+                            tree.prune(++prunning_limit);
+                        }
                     }
+                }
+                else if (frequency > PRUNNING_LIMIT) {
+                    tree.add_phrase(data, frequency);
                 }
             }
         }

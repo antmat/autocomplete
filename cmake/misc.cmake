@@ -12,7 +12,7 @@ SET (FLAGS_WARNING 	"-Wall -Werror -Wextra -pedantic -Winit-self -Wconversion")
 
 SET (FLAGS_CXX_LANG "-std=c++11")
 SET (FLAGS_WARNING_CXX "${FLAGS_WARNING} -Weffc++ -Wold-style-cast -Woverloaded-virtual -Wshadow -Wctor-dtor-privacy -Wnon-virtual-dtor")
-SET (FLAGS_RELEASE "-ggdb -O2 -DNDEBUG")
+SET (FLAGS_RELEASE "-O3 -DNDEBUG")
 SET (FLAGS_DEBUG "-ggdb -O2")
 MESSAGE("Build type is ${CMAKE_BUILD_TYPE}")
 function(disable_warnings)

@@ -1,6 +1,9 @@
 CMakeLists.txt.user.0000000
+config/blizzard-*.xml
 CMakeLists.txt.user
 debug_build
+release_build
+build
 downloader.err
 downloader.log
 downloader.pid

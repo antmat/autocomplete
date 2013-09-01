@@ -2,7 +2,6 @@
 #include <iostream>
 #include <set>
 namespace AC {
-
     Node* Node::search_internal(const String& phrase, unsigned int current_position, bool insert_on_miss, unsigned int freq) {
         assert(TOP_SUGGESTIONS_CNT >0);
         assert(current_position < phrase.size()+1);
@@ -76,10 +75,15 @@ namespace AC {
             return lhs < rhs;
         };
         std::map<Node*, Node*, decltype(comparator)> sorting_map(comparator);
-        sorting_map[this] = this;
+        if(this->frequency>0) {
+            sorting_map[this] = this;
+        }
         for(unsigned int i=0; i< this->subnodes.size(); i++) {
             sorting_map[this->subnodes[i]->top_node] = this->subnodes[i];
         }
+
+        //something like O(k*k*m+k*log(k)) where k -number of requested elements, m - average number of subnodes
+        //if k const and m const O(1)
         for(unsigned int i=1; i<= count; i++) {
             auto it = sorting_map.end();
             if(it == sorting_map.begin()) {
@@ -97,10 +101,12 @@ namespace AC {
                 }
                 auto& cur_subnodes = pair.second->subnodes;
                 for(unsigned int k=0; k < cur_subnodes.size(); k++) {
-                    if(cur_subnodes[k]->top_node->frequency > min_frequency || sorting_map.size() < count) {
+                    if(cur_subnodes[k]->top_node->frequency > min_frequency ||
+                       (sorting_map.size() < count && cur_subnodes[k]->top_node->frequency > 0)) {
                         sorting_map[cur_subnodes[k]->top_node] = cur_subnodes[k];
                     }
-                    if(cur_subnodes[k]->frequency > min_frequency || sorting_map.size() < count) {
+                    if(cur_subnodes[k]->frequency > min_frequency ||
+                       (sorting_map.size() < count && cur_subnodes[k]->frequency > 0)) {
                         sorting_map[cur_subnodes[k]] = cur_subnodes[k];
                     }
                 }

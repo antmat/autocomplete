@@ -11,6 +11,7 @@ ${AC_ROOT_DIR}/src/treeiterator.cpp
 ${AC_ROOT_DIR}/src/node.cpp
 ${AC_ROOT_DIR}/src/memusage.cpp
 ${AC_ROOT_DIR}/src/util/string.cpp
+${AC_ROOT_DIR}/src/constants.cpp
 )
 
 add_library(ac MODULE
@@ -22,7 +23,7 @@ ${AC_ROOT_DIR}/src/util/httpparam.cpp
 ${AC_ROOT_DIR}/src/util/string.cpp
 ${AC_ROOT_DIR}/src/preprocessor.cpp
 ${AC_ROOT_DIR}/src/memusage.cpp
-
+${AC_ROOT_DIR}/src/constants.cpp
 )
 
 install (FILES ${AC_ROOT_DIR}/config/blizzard.xml DESTINATION /etc/ac/)

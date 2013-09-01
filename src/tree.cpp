@@ -50,7 +50,7 @@ namespace AC {
     }
 
     void Tree::prune(unsigned int prunning_limit) {
-        std::cerr << "prunning tree with limit" << prunning_limit << std::endl;
+        std::cerr << "prunning tree with limit " << prunning_limit << std::endl;
         this->root->prune(prunning_limit);
     }
 }

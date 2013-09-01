@@ -9,6 +9,8 @@ int main (int argc, const char **argv) {
     }
     String infile(argv[1]), outfile(argv[2]);
     unsigned int chunks_created = 0;
-    Preprocessor::compact_data(infile, outfile, chunks_created);
-    Preprocessor::merge_data(outfile, chunks_created);
+    if(Preprocessor::compact_data(infile, outfile, chunks_created)) {
+        Preprocessor::merge_data(outfile, chunks_created);
+    }
+    return 0;
 }
