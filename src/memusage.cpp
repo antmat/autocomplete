@@ -1,11 +1,3 @@
-//
-//  memusage.cpp
-//  PoiSearch
-//
-//  Created by Anton Matveenko on 10.04.13.
-//  Copyright (c) 2013 Anton Matveenko. All rights reserved.
-//
-
 #include "memusage.hpp"
 #include <unistd.h>
 #include <ios>
@@ -13,13 +5,6 @@
 #include <fstream>
 #include "util/string.hpp"
 
-//////////////////////////////////////////////////////////////////////////////
-//
-// process_mem_usage(double &, double &) - takes two doubles by reference,
-// attempts to read the system-dependent data for a process' virtual memory
-// size and resident set size, and return the results in KB.
-//
-// On failure, returns 0.0, 0.0
 namespace AC {
     void process_mem_usage(unsigned int& vm_usage, unsigned int& resident_set) {
         double _vm_usage, _resident_set;
@@ -27,7 +12,6 @@ namespace AC {
         vm_usage = static_cast<unsigned int>(_vm_usage);
         resident_set = static_cast<unsigned int>(_resident_set);
     }
-
     void process_mem_usage(double& vm_usage, double& resident_set)
     {
         using std::ios_base;

@@ -1,5 +1,6 @@
 #include "util/string.hpp"
 #include <sstream>
+#include <stdexcept>
 namespace AC {
     String urlencode(const String &c) {
         std::ostringstream escaped;
@@ -19,6 +20,19 @@ namespace AC {
         return escaped.str();
     }
     String urldecode(const String &c) {
-        return c;//todo : implement!!!
+        String ret;
+        for(unsigned int i = 0; i < c.size(); i++) {
+            if(c[i] == '%') {
+                if (i>=c.size() - 2) {
+                    throw std::logic_error("Invalid query");
+                }
+                ret += static_cast<char>(std::stoi(c.substr(i+1, 2), 0, 16));
+                i+=2;
+            }
+            else {
+                ret+= c[i];
+            }
+        }
+        return ret;
     }
 }
